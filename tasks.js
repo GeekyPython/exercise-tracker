@@ -43,6 +43,7 @@ const addExercise = async (req,res) =>
         }
 
         content.date = req.body.date ? new Date(req.body.date).toDateString() : new Date().toDateString();
+        content.duration = parseInt(req.body.duration);
         user[0].exercises.push(content);
         const updatedUser = await Tasks.create(user);
         await Tasks.findByIdAndUpdate(userID,updatedUser);
