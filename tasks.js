@@ -44,7 +44,10 @@ const addExercise = async (req,res) =>
         user[0].exercises.push(req.body);
         const updatedUser = await Tasks.create(user);
         await Tasks.findByIdAndUpdate(userID,updatedUser);
-        return res.status(201).json(user);
+        const {_id,username} = await Tasks.findById(userID);
+        const {duration,description,date} = req.body;
+
+        return res.status(201).json({username,duration,description,date,_id});
     }
 
     catch(err)
