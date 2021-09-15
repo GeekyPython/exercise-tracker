@@ -43,8 +43,6 @@ const addExercise = async (req,res) =>
         }
 
         content.date = req.body.date ? new Date(req.body.date).toDateString() : new Date().toDateString();
-        console.log(req.body);
-        console.log(content);
         user[0].exercises.push(content);
         const updatedUser = await Tasks.create(user);
         await Tasks.findByIdAndUpdate(userID,updatedUser);
@@ -69,17 +67,27 @@ const showUserLogs = async (req,res) =>
         const data = await Tasks.findById(req.params._id);
         const {username,_id,exercises} = data;
         const count = exercises.length;
-        /*const content = data.map(usr => {
-            const {username,_id,exercises} = usr;
-            const count= usr.exercises.length;
-            return {username,_id,count,log: exercises}
-        })*/
+        let limitedList = [...exercises];
 
-        res.status(200).json({username,count,_id,log: exercises});
+        const from = new Date(req.query.from);
+        const to = new Date(req.query.to);
+
+        if(from!="Invalid Date" && to!="Invalid Date")
+        {
+            limitedList = limitedList.filter(elem => {
+                let temp = new Date(elem.date);
+                return temp.getTime()>=from.getTime() && temp.getTime()<=to.getTime();
+            })
+        }
+
+        const limit = req.query.limit ? req.query.limit : limitedList.length;
+        limitedList = limitedList.splice(0,limit);
+        return res.status(200).json({username,count,_id,log: limitedList});
     }
 
     catch(err)
     {
+        console.log(err);
         res.status(500).json({msg: err});
     }
     
