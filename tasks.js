@@ -50,7 +50,7 @@ const addExercise = async (req,res) =>
         const {duration,description} = content;
         const date = content.date ? content.date : new Date().toDateString();
 
-        return res.status(201).json({username,duration,description,date,_id});
+        return res.status(201).json({_id,username,date,duration,description});
     }
 
     catch(err)
